@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Evolving AI</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#131314">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Evolving AI">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff;--sf:#f0f4f9;--sf2:#e3e8ef;--tx:#1f1f1f;--mu:#5f6368;--ac:#0b57d0}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#131314;--sf:#1e1f20;--sf2:#2d2f31;--tx:#e3e3e3;--mu:#9aa0a6;--ac:#a8c7fa}}
+:root[data-theme="dark"]{--bg:#131314;--sf:#1e1f20;--sf2:#2d2f31;--tx:#e3e3e3;--mu:#9aa0a6;--ac:#a8c7fa}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.55 "Google Sans",Roboto,system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.top{display:flex;align-items:center;justify-content:space-between;padding:10px 12px}
+.ib{width:40px;height:40px;border-radius:50%;font-size:20px}
+.ib:active{background:var(--sf2)}
+.ttl{font-size:20px;font-weight:500}
+.grad{background:linear-gradient(90deg,#4285f4,#9b72cb,#d96570);-webkit-background-clip:text;background-clip:text;color:transparent}
+#main{flex:1;overflow-y:auto;padding:0 16px 8px}
+#hero{margin-top:12vh}
+#hero h2{font-size:34px;line-height:1.2;margin:0 0 6px;font-weight:500}
+#hero p{font-size:30px;margin:0;color:var(--sf2);font-weight:500}
+.chips{display:flex;flex-direction:column;gap:10px;margin-top:36px}
+.chip{background:var(--sf);border-radius:16px;padding:14px 16px;text-align:left}
+.u{background:var(--sf);border-radius:20px 20px 4px 20px;padding:10px 16px;margin:14px 0 14px auto;width:fit-content;max-width:85%}
+.b{display:flex;gap:12px;margin:14px 0}
+.sp{flex:none;font-size:22px;line-height:1.3}
+.bt{flex:1;min-width:0;white-space:pre-wrap;word-wrap:break-word}
+.act{display:flex;gap:2px;margin-top:6px}
+.act button{width:34px;height:34px;border-radius:50%;font-size:16px;opacity:.7}
+.act button:active{background:var(--sf2)}
+.tc{display:flex;gap:6px;margin-top:8px}
+.tc input{flex:1;min-width:0}
+.sys{text-align:center;color:var(--mu);font-size:13px;margin:10px 0}
+.bar{padding:8px 12px 12px}
+.pill{display:flex;align-items:center;gap:6px;background:var(--sf);border-radius:28px;padding:6px 6px 6px 6px}
+input{font:inherit;color:var(--tx);background:none;border:0;outline:0;flex:1;min-width:0;padding:8px 0}
+.tc input{background:var(--sf);border-radius:12px;padding:8px 12px}
+.send{background:var(--ac);color:var(--bg);width:40px;height:40px;border-radius:50%;font-size:18px}
+.note{text-align:center;font-size:11px;color:var(--mu);margin-top:6px}
+#dr{position:fixed;inset:0;display:none;background:rgba(0,0,0,.4);z-index:5}
+#pn{position:absolute;left:0;top:0;bottom:0;width:84%;max-width:340px;background:var(--bg);padding:calc(16px + env(safe-area-inset-top,0px)) 16px 16px;overflow-y:auto;font-size:14px}
+#pn h3{margin:18px 0 6px;font-size:13px;color:var(--mu);font-weight:500;text-transform:uppercase}
+.btn{display:block;width:100%;background:var(--sf);border-radius:20px;padding:10px 14px;margin:6px 0;text-align:left}
+.pg{height:6px;background:var(--sf2);border-radius:3px;margin:6px 0;overflow:hidden}
+.pg i{display:block;height:100%;width:0;background:var(--ac)}
+.pill .ib{flex:none;width:36px;height:36px;font-size:22px;color:var(--mu)}
+</style>
+</head>
+<body>
+<div class="top">
+ <button class="ib" id="mn" aria-label="Menu">☰</button>
+ <div class="ttl grad">Evolving AI</div>
+ <button class="ib" id="nw" aria-label="New chat">✏️</button>
+</div>
+<div id="main">
+ <div id="hero">
+  <h2 class="grad">Hello there</h2>
+  <p>How can I help today?</p>
+  <div class="chips">
+   <button class="chip" data-t="hello">👋 Say hello</button>
+   <button class="chip" data-t="what can you do">✨ What can you do?</button>
+   <button class="chip" data-t="how are you">💬 How are you?</button>
+  </div>
+ </div>
+ <div id="msgs"></div>
+</div>
+<div class="bar">
+ <div class="pill"><button class="ib" id="at" aria-label="Add book">＋</button><input id="in" placeholder="Ask Evolving AI or your books" autocomplete="off"><button class="send" id="sd" aria-label="Send">➤</button></div>
+ <div class="note" id="mode">Local learning mode · works offline</div>
+</div>
+<div id="dr"><div id="pn">
+ <div class="ttl grad">Evolving AI</div>
+ <h3>Model</h3><div id="stat"></div>
+ <button class="btn" id="rt">🔁 Retrain voice model</button>
+ <h3>Library</h3><div id="bk" style="color:var(--mu)"></div>
+ <button class="btn" id="ab">📚 Add book (PDF, Word, Excel, TXT)</button><input type="file" id="fi" hidden multiple accept=".pdf,.docx,.xlsx,.xls,.csv,.txt,.md">
+ <button class="btn" id="vc"></button><button class="btn" id="wr">✍️ Write in my books' voice</button>
+ <h3>Meaning (optional)</h3>
+ <div id="es" style="color:var(--mu)">Downloads a small ~25 MB model once, so I can find passages, pick quotes and group themes by what they MEAN, not just matching words.</div>
+ <div class="pg"><i id="eb"></i></div>
+ <button class="btn" id="un">🧠 Understand my books by meaning</button>
+ <button class="btn" id="sm"></button>
+ <h3>Smart summaries (optional)</h3>
+ <div id="cs" style="color:var(--mu)"></div>
+ <input id="ak" type="password" placeholder="Anthropic API key (sk-ant-…)" autocomplete="off" style="width:100%;box-sizing:border-box;background:var(--sf);border-radius:12px;padding:10px 12px;margin:8px 0">
+ <select id="am" style="width:100%;background:var(--sf);color:var(--tx);border:0;border-radius:12px;padding:10px 12px"><option value="claude-sonnet-5-5">Claude Sonnet 5.5 (best)</option><option value="claude-haiku-5-5">Claude Haiku 5.5 (cheaper)</option></select>
+ <button class="btn" id="sk">Save</button>
+ <h3>On-device LLM</h3>
+ <div id="ls" style="color:var(--mu)">Optional. Downloads a small model once (~700 MB), then runs on your phone. Needs WebGPU.</div>
+ <div class="pg"><i id="pb"></i></div>
+ <select id="lm" style="width:100%;background:var(--sf);color:var(--tx);border:0;border-radius:12px;padding:10px 12px;margin:6px 0"><option value="3B">Smarter: Llama 3.2 3B (~2 GB, newer phones)</option><option value="1B">Faster: Llama 3.2 1B (~0.7 GB)</option></select>
+ <button class="btn" id="ld">⬇️ Load LLM</button>
+ <h3>History</h3><div id="hs" style="color:var(--mu)"></div>
+ <button class="btn" id="rs" style="margin-top:20px">🗑 Reset all learning</button>
+</div></div>
+<script>
+const KEY='evolving-ai-v1';
+const seed=()=>({entries:[
+ {id:1,p:'hello hi hey',a:'Hey! Teach me things. Rate my replies and I will improve.',q:0,n:0},
+ {id:2,p:'how are you',a:"I'm learning every minute. How about you?",q:0,n:0},
+ {id:3,p:'your name who are you',a:"I'm Evolving AI, a self-improving assistant that lives on your phone.",q:0,n:0},
+ {id:4,p:'help what can you do',a:'I chat, learn from 👍/👎, and retrain myself every few ratings.',q:0,n:0}],
+ theta:{s:1,q:0.6,eps:0.15,alpha:0.3},hist:[{v:1,note:'initial model'}],replay:[],since:0,nextId:5});
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||seed()}catch(e){S=seed()}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const crumb=x=>{try{localStorage.setItem('eai-crumb',x)}catch(e){}};
+S.notes=S.notes||[];S.lam=S.lam||[.6,.3,.1];if(S.voice===undefined)S.voice=true;
+const $=i=>document.getElementById(i);
+// ---- learning engine (bandit + replay-evaluated retraining) ----
+const tok=t=>new Set(t.toLowerCase().replace(/[^a-z0-9\s]/g,'').split(/\s+/).filter(w=>w.length>1));
+const sim=(a,b)=>{const A=tok(a),B=tok(b);let i=0;A.forEach(w=>B.has(w)&&i++);return i?i/(A.size+B.size-i):0};
+const rank=(m,th)=>S.entries.map(e=>({e,sc:sim(m,e.p)>0?th.s*sim(m,e.p)+th.q*e.q:-9})).sort((a,b)=>b.sc-a.sc);
+function pick(m){const r=rank(m,S.theta).filter(x=>x.sc>-9);if(!r.length)return null;
+ return r[Math.random()<S.theta.eps?Math.floor(Math.random()*Math.min(3,r.length)):0].e}
+const evalT=th=>{if(!S.replay.length)return 0;let h=0;
+ S.replay.forEach(x=>{const t=rank(x.m,th)[0];if(t&&t.sc>-9)x.r>0?(t.e.id===x.id&&h++):(t.e.id!==x.id&&h++)});return h/S.replay.length};
+// ---- optional on-device LLM (WebLLM) ----
+let llm=null;const chatLog=[];
+async function loadLLM(){
+ const ls=$('ls');
+ if(!navigator.gpu){ls.textContent='❌ This browser has no WebGPU. Use Chrome (Android, updated) or Safari on iOS 26+. Local mode still works.';return}
+ ls.textContent='Checking your GPU…';
+ let ad;try{ad=await navigator.gpu.requestAdapter()}catch(e){}
+ if(!ad){ls.textContent='❌ No usable GPU found by the browser. Local mode still works.';return}
+ const f16=ad.features&&ad.features.has('shader-f16');
+ const big=$('lm').value==='3B',list=(big?[f16?'Llama-3.2-3B-Instruct-q4f16_1-MLC':'Llama-3.2-3B-Instruct-q4f32_1-MLC']:[]).concat(f16?['Llama-3.2-1B-Instruct-q4f16_1-MLC']:[],['Llama-3.2-1B-Instruct-q4f32_1-MLC','SmolLM2-360M-Instruct-q4f32_1-MLC']);
+ let w;try{w=await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.79/+esm')}
+ catch(e){ls.textContent='❌ Could not load the WebLLM library (internet or blocked CDN): '+(e.message||e);return}
+ for(const m of list){
+  try{
+   ls.textContent='Downloading '+m+'…';
+   llm=await w.CreateMLCEngine(m,{initProgressCallback:p=>{$('pb').style.width=(p.progress*100)+'%';ls.textContent=p.text}});
+   ls.textContent='✅ LLM ready: '+m;$('mode').textContent='On-device LLM + learning · offline after first load';return
+  }catch(e){llm=null;ls.textContent='⚠️ '+m+' failed: '+(e.message||e)+' Trying a smaller one…';await new Promise(r=>setTimeout(r,2500))}
+ }
+ ls.textContent+=' ❌ All models failed. Check free storage (~1 GB), close other apps, and retry on Wi-Fi.'}
+async function llmReply(t){
+ const liked=S.entries.filter(e=>e.id>4).slice(-5).map(e=>'- '+e.p+' → '+e.a).join('\n'),ex=S.voice?await exemplars():[];
+ const sys='You are Evolving AI, a warm, concise assistant on a phone. Be natural and conversational.'+(S.notes.length?'\nThings the user asked you to remember:\n'+S.notes.map(x=>'- '+x).join('\n'):'')+(liked?'\nReplies the user taught you:\n'+liked:'')+(ex.length?'\nWrite in the voice and sentence rhythm of these lines from the user\'s books:\n'+ex.map(x=>'- '+x).join('\n'):'');
+ if(cloudKey())return clean(await cloud(sys+'\n\nConversation so far:\n'+chatLog.slice(-6).map(m=>m.role+': '+m.content).join('\n')+'\n\nuser: '+t,600));
+ const r=await llm.chat.completions.create({messages:[{role:'system',content:sys},...chatLog.slice(-6),{role:'user',content:t}],max_tokens:300});return r.choices[0].message.content}
+// ---- UI ----
+const msgs$=$('msgs'),main=$('main');
+function scroll(){main.scrollTop=main.scrollHeight}
+function note(t){$('hero').style.display='none';const d=document.createElement('div');d.className='sys';d.textContent=t;msgs$.appendChild(d);scroll();return d}
+function user(t){$('hero').style.display='none';const d=document.createElement('div');d.className='u';d.textContent=t;msgs$.appendChild(d);scroll()}
+function bot(text,m,id){
+ const row=document.createElement('div');row.className='b';
+ row.innerHTML='<div class="sp grad">✦</div><div class="bt"></div>';
+ const bt=row.querySelector('.bt');bt.textContent=text;
+ const act=document.createElement('div');act.className='act';
+ const mk=(ic,fn)=>{const b=document.createElement('button');b.textContent=ic;b.onclick=fn;act.appendChild(b)};
+ mk('🔁',()=>{row.remove();send(m,true)});mk('📌',()=>{S.notes.push(text.slice(0,240));S.notes=S.notes.slice(-30);save();note('📌 Pinned. I will keep this in mind.')});
+ mk('📋',()=>{try{navigator.clipboard.writeText(text)}catch(e){}});
+ bt.appendChild(act);msgs$.appendChild(row);scroll();return bt}
+function rate(id,m,text,r,act,bt){
+ act.remove();
+ if(id==null){ // LLM reply: distil good ones into local memory
+  if(r>0){id=S.nextId++;S.entries.push({id,p:m,a:text,q:.5,n:1});S.replay.push({m,id,r:1});note('Saved to memory 🧠')}
+ }else{const e=S.entries.find(x=>x.id===id);if(e){e.q+=S.theta.alpha*(r-e.q);e.n++}S.replay.push({m,id,r})}
+ if(S.replay.length>200)S.replay.shift();S.since++;
+ if(r<0)teach(m,bt);
+ save();panel();if(S.since>=5)retrain()}
+function teach(m,bt){
+ const d=document.createElement('div');d.className='tc';
+ d.innerHTML='<input placeholder="What should I have said?"><button class="send" style="width:36px;height:36px">✓</button>';
+ const i=d.querySelector('input');
+ d.querySelector('button').onclick=()=>{const v=i.value.trim();if(!v)return;
+  const id=S.nextId++;S.entries.push({id,p:m,a:v,q:.5,n:1});S.replay.push({m,id,r:1});save();d.remove();note('Learned! 🧠');panel()};
+ bt.appendChild(d);i.focus()}
+async function send(t,again){
+ t=t.trim();if(!t)return;$('in').value='';if(!again)user(t);
+ const rm=/^\s*remember( that)?\s+(.+)/i.exec(t);if(rm){S.notes.push(rm[2]);S.notes=S.notes.slice(-30);save();bot('Noted. I will remember: '+rm[2],t,null);return}
+ try{if(await bookCmd(t))return}catch(e){crumb('ok');note('⚠️ Searching your books failed ('+(e.message||e)+'). Answering normally.')}
+ let id=null,out;
+ if(llm||cloudKey()){try{out=await llmReply(t);chatLog.push({role:'user',content:t},{role:'assistant',content:out})}catch(e){out=null}}
+ if(out==null){const e=pick(t);if(e){out=e.a;id=e.id}else{const b=bot("I don't know that yet. Type what I should say below and I will learn it.",t,null);teach(t,b);return}}
+ bot(out,t,id)}
+function panel(){renderBooks();
+ bAll().then(bs=>{const ch=bs.reduce((a,b)=>a+b.text.length,0);$('stat').innerHTML=bs.length+' books · ~'+Math.round(ch/6000)+'k words<br>Voice model: '+(S.ppl?'perplexity '+S.ppl.toFixed(0)+' (lower is better)':'not trained yet')+'<br>'+S.notes.length+' remembered notes<br>Meaning search: '+(S.sem?'on':'off')});
+ $('hs').innerHTML=S.hist.slice().reverse().slice(0,8).map(h=>'v'+h.v+': '+h.note).join('<br>')}
+// ---- Library: add books (PDF / Word / Excel / CSV / TXT), summarise, answer from them ----
+const PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',PDFW='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',MAM='https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js',XLS='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+const loaded={};const lib=u=>loaded[u]||(loaded[u]=new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.crossOrigin='anonymous';s.onload=ok;s.onerror=()=>{delete loaded[u];no(new Error('Could not load the file reader (needs internet the first time)'))};document.head.appendChild(s)}));
+const idb=()=>new Promise((ok,no)=>{const r=indexedDB.open('eai-books',2);
+ r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('b'))d.createObjectStore('b',{keyPath:'id'});if(!d.objectStoreNames.contains('e'))d.createObjectStore('e',{keyPath:'id'})};
+ r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error);r.onblocked=()=>no(new Error('Close other copies of the app and retry'))});
+const getAll=(d,s)=>new Promise(ok=>{const q=d.transaction(s).objectStore(s).getAll();q.onsuccess=()=>ok(q.result);q.onerror=()=>ok([])});
+const tx=(d,names,fn)=>new Promise((ok,no)=>{const t=d.transaction(names,'readwrite');fn(t);t.oncomplete=ok;t.onerror=()=>no(t.error)});
+let BKC=null; // books are cached in memory so opening the menu or asking a question never re-reads everything
+const bAll=async()=>{if(BKC)return BKC;try{const d=await idb(),bs=await getAll(d,'b'),es=await getAll(d,'e');
+ bs.forEach(b=>{const e=es.find(x=>x.id===b.id);if(e){b.emb=e.emb;b.embN=e.done;b.stride=e.stride}});return BKC=bs}catch(e){return[]}};
+const bPut=async r=>{const d=await idb(),{emb,embN,stride,...rest}=r;
+ await tx(d,emb?['b','e']:['b'],t=>{t.objectStore('b').put(rest);if(emb)t.objectStore('e').put({id:r.id,emb,done:embN==null?emb.length/384:embN,stride:stride||1})});
+ if(BKC){const i=BKC.findIndex(x=>x.id===r.id);i<0?BKC.push(r):BKC[i]=r}};
+const ePut=async b=>{const d=await idb();await tx(d,['e'],t=>t.objectStore('e').put({id:b.id,emb:b.emb,done:b.embN,stride:b.stride||1}))};
+const bDel=async id=>{const d=await idb();await tx(d,['b','e'],t=>{t.objectStore('b').delete(id);t.objectStore('e').delete(id)});if(BKC)BKC=BKC.filter(x=>x.id!==id)};
+let pdfReady=0;
+async function extract(f,cb){
+ const n=f.name.toLowerCase();
+ if(/\.(txt|md|csv)$/.test(n))return f.text();
+ if(n.endsWith('.pdf')){
+  await lib(PDFJS);
+  if(!pdfReady){const w=await(await fetch(PDFW)).text();pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([w],{type:'text/javascript'}));pdfReady=1}
+  const doc=await pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;let t='';
+  for(let i=1;i<=doc.numPages;i++){const c=await(await doc.getPage(i)).getTextContent();t+=c.items.map(x=>x.str+(x.hasEOL?'\n':' ')).join('')+'\n\n';cb(i/doc.numPages)}
+  return t}
+ if(n.endsWith('.docx')){await lib(MAM);return(await mammoth.extractRawText({arrayBuffer:await f.arrayBuffer()})).value}
+ if(/\.xlsx?$/.test(n)){await lib(XLS);const wb=XLSX.read(await f.arrayBuffer());return wb.SheetNames.map(s=>'Sheet '+s+':\n'+XLSX.utils.sheet_to_csv(wb.Sheets[s])).join('\n\n')}
+ throw new Error('Unsupported type. Use PDF, DOCX, XLSX, CSV, TXT or MD (old .doc: save as .docx first).')}
+const SPLIT=/(?<=[.!?])\s+|\n+/;
+function chunk(t){const o=[];let c='';for(const s of t.split(SPLIT)){if(c.length+s.length>1200&&c){o.push(c);c=''}c+=s+' '}if(c.trim())o.push(c);return o}
+const STOP=new Set('about above after again also because been before being between both could does each from have here into just like make many more most much only other over said same some such than that their them then there these they this those through under very were what when where which while will with would your'.split(' '));
+const W=s=>[...new Set((s.toLowerCase().match(/[a-z0-9]{4,}/g)||[]).filter(w=>!STOP.has(w)))];
+function tr(ss,n){ // TextRank + redundancy penalty; returns sentence indices in reading order
+ const m=ss.length;if(m<=n)return ss.map((_,i)=>i);
+ const ws=ss.map(s=>new Set(W(s))),sm=Array.from({length:m},()=>new Float32Array(m)),deg=new Float32Array(m);
+ for(let i=0;i<m;i++)for(let j=i+1;j<m;j++){let k=0;ws[i].forEach(w=>ws[j].has(w)&&k++);
+  if(k&&ws[i].size>1&&ws[j].size>1){const v=k/(Math.log(ws[i].size)+Math.log(ws[j].size)+.5);sm[i][j]=sm[j][i]=v;deg[i]+=v;deg[j]+=v}}
+ let sc=new Float32Array(m).fill(1);
+ for(let it=0;it<25;it++){const nx=new Float32Array(m);for(let i=0;i<m;i++){let a=0;for(let j=0;j<m;j++)if(sm[j][i]&&deg[j])a+=sm[j][i]/deg[j]*sc[j];nx[i]=.15+.85*a}sc=nx}
+ const pk=[];
+ while(pk.length<n){let b=-1,bv=-1;for(let i=0;i<m;i++){if(pk.includes(i))continue;let r=0;pk.forEach(p=>r=Math.max(r,sm[i][p]));const v=sc[i]*(i<2?1.25:1)/(1+2*r);if(v>bv){bv=v;b=i}}pk.push(b)}
+ return pk.sort((a,b)=>a-b)}
+const sents=t=>t.split(SPLIT).map(s=>s.trim()).filter(s=>s.length>40&&s.length<450);
+const spread=(a,k)=>a.length>k?a.filter((_,i)=>i%Math.ceil(a.length/k)===0):a;
+function sections(t){
+ const H=l=>{l=l.trim();return l.length>2&&l.length<80&&!/[.,;:]$/.test(l)&&(/^(chapter|part|section|book|appendix|introduction|conclusion|preface|prologue|epilogue)\b/i.test(l)||/^\d+(\.\d+)*[.)]?\s+[A-Z]/.test(l)||(l===l.toUpperCase()&&/[A-Z]{3}/.test(l)))};
+ const out=[];let cur={t:'Opening',x:[]};
+ for(const l of t.split('\n')){if(H(l)&&cur.x.join(' ').length>400){out.push(cur);cur={t:l.trim(),x:[]}}else if(H(l)&&!cur.x.length)cur.t=l.trim();else cur.x.push(l)}
+ out.push(cur);
+ let s=out.map(o=>({t:o.t,x:o.x.join(' ')})).filter(o=>o.x.length>150);
+ if(s.length<3||s.length>40){const n=Math.min(10,Math.max(1,Math.round(t.length/9000))),L=Math.ceil(t.length/n);s=[];for(let i=0;i<n;i++)s.push({t:'Part '+(i+1)+' of '+n,x:t.slice(i*L,(i+1)*L)})}
+ return s}
+function digest(t){
+ const all=sents(t);if(all.length<6)return t.slice(0,800);
+ const f={};all.forEach(s=>W(s).forEach(w=>f[w]=(f[w]||0)+1));
+ const terms=Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,10).map(x=>x[0]);
+ const cand=spread(all,300),oi=tr(cand,4),ov=oi.map(i=>cand[i]).join(' '),mq=tr(cand,10).filter(i=>!oi.includes(i)).slice(0,4).map(i=>'  “'+cand[i]+'”').join('\n');
+ const secs=sections(t);let body='';
+ secs.forEach(s=>{const c=spread(sents(s.x),250);if(!c.length)return;body+='▸ '+s.t+'\n'+tr(c,2).map(i=>'  • '+c[i]).join('\n')+'\n\n'});
+ const nums=all.filter(s=>/\d/.test(s)&&/(%|\$|£|€|million|billion|percent|\b(19|20)\d\d\b)/i.test(s)).slice(0,150),kf=nums.length>3?tr(nums,3).map(i=>'  • '+nums[i]).join('\n'):'';
+ return 'OVERVIEW\n'+ov+'\n\nKEY TOPICS\n'+terms.join(' · ')+'\n\nSECTION BY SECTION\n'+body+(kf?'KEY FIGURES\n'+kf+'\n\n':'')+(mq?'MEMORABLE QUOTES\n'+mq+'\n\n':'')+'(offline digest · ~'+Math.round(t.split(/\s+/).length/100)*100+' words · '+secs.length+' sections)'}
+function sheetDigest(t){
+ return t.split(/\n\n(?=Sheet )/).map(b=>{const L=b.split('\n').filter(x=>x.trim()),hdr=(L[1]||'').split(','),data=L.slice(2).map(r=>r.split(',')),st=[];
+  hdr.forEach((h,c)=>{const v=data.map(r=>parseFloat((r[c]||'').replace(/[^0-9.\-]/g,''))).filter(x=>!isNaN(x));
+   if(v.length>=Math.max(3,data.length*.6)){const s=v.reduce((a,x)=>a+x,0);st.push('  • '+h+': min '+v.reduce((a,x)=>Math.min(a,x))+', max '+v.reduce((a,x)=>Math.max(a,x))+', avg '+(s/v.length).toFixed(2)+', total '+s.toFixed(2))}});
+  return '▸ '+L[0].replace(/:$/,'')+' · '+data.length+' rows × '+hdr.length+' columns\n  Columns: '+hdr.join(', ')+(st.length?'\n'+st.slice(0,8).join('\n'):'')}).join('\n\n')}
+const ext=r=>r.kind==='sheet'?sheetDigest(r.text):digest(r.text);
+const ask=async c=>(await llm.chat.completions.create({messages:[{role:'user',content:c}],max_tokens:300})).choices[0].message.content;
+async function llmSum(r,n){
+ const secs=sections(r.text).slice(0,12),notes=[];
+ for(let i=0;i<secs.length;i++){
+  n.textContent='Reading '+(i+1)+' of '+secs.length+': '+secs[i].t.slice(0,28)+'…';
+  const c=spread(sents(secs[i].x),250),q=c.length>2?c[tr(c,1)[0]]:'',core=c.length>12?tr(c,12).map(k=>c[k]).join(' '):secs[i].x;
+  const s=await ask('Summarize this passage in 2-3 plain, specific sentences. Name the concrete people, events or ideas. No filler.\n\n'+core.slice(0,3500));
+  notes.push({t:secs[i].t,s:s.replace(/\n+/g,' '),q})}
+ n.textContent='Writing overview…';
+ const ov=await ask('These are summaries of the sections of "'+r.name+'". Write one overview paragraph (4-5 sentences) saying what the whole document is about.\n\n'+notes.map(z=>z.t+': '+z.s).join('\n'));
+ return 'OVERVIEW\n'+ov+'\n\nSECTIONS\n'+notes.map(z=>'▸ '+z.t+'\n  '+z.s+(z.q?'\n  “'+z.q+'”':'')).join('\n\n')}
+const cloudKey=()=>{try{return localStorage.getItem('eai-ak')||''}catch(e){return''}};
+const cloudModel=()=>{try{return localStorage.getItem('eai-am')||'claude-sonnet-5-5'}catch(e){return'claude-sonnet-5-5'}};
+const clean=t=>t.replace(/^#+\s*/gm,'').replace(/\*\*/g,'').replace(/^\s*[-*]\s+/gm,'• ');
+async function cloud(p,max,retry){
+ const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':cloudKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:cloudModel(),max_tokens:max||1500,messages:[{role:'user',content:p}]})});
+ const j=await r.json().catch(()=>({}));
+ if((r.status===429||r.status===529)&&!retry){await new Promise(z=>setTimeout(z,20000));return cloud(p,max,1)}
+ if(!r.ok)throw new Error((j.error&&j.error.message)||('HTTP '+r.status));
+ return j.content.map(c=>c.text||'').join('')}
+const SUMP='Write a thorough, well-organised summary of this document. Use these headings: Overview (one paragraph), Key themes, Section-by-section breakdown (each chapter or section with its main points), Key facts and figures, Takeaways, Memorable quotes (5 to 8 short quotes copied exactly from the text, in double quotes). Be specific rather than generic, and do not invent anything that is not in the text.';
+async function cloudSum(r,n){
+ const T=r.text.slice(0,1200000),P=80000,parts=[];for(let i=0;i<T.length;i+=P)parts.push(T.slice(i,i+P));
+ if(parts.length===1)return clean(await cloud(SUMP+'\n\nDocument: "'+r.name+'"\n\n'+parts[0],2000));
+ const notes=[];
+ for(let i=0;i<parts.length;i++){n.textContent='Reading part '+(i+1)+' of '+parts.length+' with Claude…';notes.push(await cloud('Make detailed notes on part '+(i+1)+' of '+parts.length+' of "'+r.name+'": main points per chapter or section, key names, facts and figures.\n\n'+parts[i],1800))}
+ n.textContent='Writing final summary…';
+ return clean(await cloud(SUMP+'\n\nBelow are detailed notes on each part of "'+r.name+'". Merge them into one summary.\n\n'+notes.join('\n\n---\n\n'),2500))}
+async function summarize(r){crumb('working: summarizing a book');
+ const n=note('Summarizing “'+r.name+'”…'),k=(cloudKey()?'c'+cloudModel():llm?'l':'e')+(embDone(r)?'s':'');
+ r.summary=r.summary||{};let out=r.summary[k],used=k;
+ if(!out){try{out=cloudKey()?await cloudSum(r,n):llm?await llmSum(r,n):ext(r)}catch(e){note('⚠️ '+(e.message||e)+' Showing the offline digest instead.');out=ext(r);used='e'}
+  if(embDone(r)){try{out+='\n\n'+await themesText(r)}catch(e){}}if(used===k&&k[0]==='c')out=verify(out,r.text);r.summary[used]=out;try{await bPut(r)}catch(e){}}
+ n.remove();crumb('ok');bot('📖 '+r.name+'\n\n'+out,'summarize '+r.name,null)}
+let IDX=null,LM=null,EX=null;
+'the and are was for not but you all can had her his has him its our out she who why how did get let may off one own too use way yes yet'.split(' ').forEach(w=>STOP.add(w));
+const stem=w=>w.length>5?w.replace(/(ing|ed|es|ly)$/,''):(w.length>4?w.replace(/s$/,''):w);
+const terms=s=>(s.toLowerCase().match(/[a-z0-9]{3,}/g)||[]).filter(w=>!STOP.has(w)).map(stem);
+async function index(){
+ if(IDX)return IDX;crumb('working: building the search index');const bs=await bAll(),docs=[],vocab=new Map(),post=[];let c0=0,len=0;
+ for(const b of bs)for(let i=0;i<b.chunks.length;i++){
+  const c=b.chunks[i],tk=terms(c),tf=new Map(),di=docs.length;tk.forEach(w=>tf.set(w,(tf.get(w)||0)+1));
+  tf.forEach((f,w)=>{let id=vocab.get(w);if(id===undefined){id=post.length;vocab.set(w,id);post.push({d:[],f:[]})}post[id].d.push(di);post[id].f.push(f)});
+  docs.push({b:b.name,i,n:b.chunks.length,c,len:tk.length,v:vecOf(b,i)});len+=tk.length;
+  if(++c0%300===0)await new Promise(r=>setTimeout(r))}
+ const X={docs,vocab,post,avg:len/(docs.length||1)};
+ X.df={get:w=>{const id=vocab.get(w);return id===undefined?undefined:post[id].d.length}};
+ crumb('ok');return IDX=X}
+// ---- meaning: small on-device embedding model (MiniLM) for semantic search, quotes and themes ----
+const dot=(a,b)=>{let s=0;for(let i=0;i<a.length;i++)s+=a[i]*b[i];return s};
+// The meaning model runs in a Web Worker so the app never freezes while it reads.
+const setEs=t=>{const e=document.getElementById('es');if(e)e.textContent=t};
+const embDone=b=>!!b.emb&&(b.embN==null||b.embN>=Math.ceil(b.chunks.length/(b.stride||1)));
+function vecOf(b,i){const s=b.stride||1;if(!b.emb||i%s)return null;const j=i/s,d=b.embN==null?b.emb.length/384:b.embN;return j<d?b.emb.subarray(j*384,(j+1)*384):null}
+let WK=null,WP=null,WID=0,WDEAD=false;const WQ=new Map();
+const tmo=(p,ms,msg)=>{let t;return Promise.race([p,new Promise((_,no)=>{t=setTimeout(()=>no(new Error(msg)),ms)})]).finally(()=>clearTimeout(t))};
+function killWorker(){try{WK&&WK.terminate()}catch(e){}WK=null;WP=null;WQ.forEach(q=>q.no(new Error('meaning model stopped')));WQ.clear()}
+function worker(){
+ if(WP)return WP;
+ return WP=new Promise((ok,no)=>{
+  let wd;
+  const fail=e=>{clearTimeout(wd);WDEAD=true;killWorker();no(e)};
+  const arm=()=>{clearTimeout(wd);wd=setTimeout(()=>fail(new Error('The meaning model did not respond for 60 s')),60000)};
+  const code="let pipe;self.onmessage=async e=>{const m=e.data;try{if(m.type==='init'){const T=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2/+esm');T.env.allowLocalModels=false;pipe=await T.pipeline('feature-extraction','Xenova/all-MiniLM-L6-v2',{dtype:'q8',progress_callback:p=>{if(p.status==='progress')self.postMessage({type:'dl',p:p.progress||0})}});self.postMessage({type:'ready'})}else{const r=await pipe(m.texts,{pooling:'mean',normalize:true});self.postMessage({type:'vec',id:m.id,data:r.data,n:r.dims[0],k:r.dims[1]})}}catch(err){self.postMessage({type:'err',id:m.id,msg:String(err&&err.message||err)})}};";
+  try{WK=new Worker(URL.createObjectURL(new Blob([code],{type:'text/javascript'})),{type:'module'})}catch(e){fail(e);return}
+  WK.onerror=e=>fail(new Error(e.message||'worker failed to start'));
+  WK.onmessage=e=>{const m=e.data;
+   if(m.type==='dl'){arm();setEs('Downloading meaning model… '+Math.round(m.p)+'%')}
+   else if(m.type==='ready'){clearTimeout(wd);setEs('Meaning model ready.');ok(WK)}
+   else if(m.type==='vec'){const q=WQ.get(m.id);WQ.delete(m.id);const o=[];for(let j=0;j<m.n;j++)o.push(m.data.slice(j*m.k,(j+1)*m.k));q&&q.ok(o)}
+   else if(m.type==='err'){if(m.id==null)fail(new Error(m.msg));else{const q=WQ.get(m.id);WQ.delete(m.id);q&&q.no(new Error(m.msg))}}};
+  arm();setEs('Starting the meaning model… (the app stays usable; gives up after 60 s of silence)');WK.postMessage({type:'init'})})}
+async function embed(tx,ms){
+ const w=await worker(),o=[];
+ for(let i=0;i<tx.length;i+=8){
+  const part=tx.slice(i,i+8).map(x=>x.slice(0,500));
+  const v=await tmo(new Promise((ok,no)=>{const id=++WID;WQ.set(id,{ok,no});w.postMessage({type:'embed',id,texts:part})}),ms||40000,'The meaning model stopped responding');
+  v.forEach(x=>o.push(x))}
+ return o}
+let UND=false,STOPU=false;
+async function understand(){
+ const btn=document.getElementById('un'),label='🧠 Understand my books by meaning',sync=()=>{if(typeof sml==='function')sml()};
+ if(UND){STOPU=true;setEs('Stopping after this batch…');return}
+ const bs=(await bAll()).slice().sort((a,b)=>a.chunks.length-b.chunks.length);if(!bs.length){setEs('Add a book first.');return}
+ bs.forEach(b=>{if(!b.stride)b.stride=Math.max(1,Math.ceil(b.chunks.length/600))});
+ const todo=bs.filter(b=>!embDone(b));
+ if(!todo.length){S.sem=true;save();sync();setEs('✅ Already done. Meaning search is on.');return}
+ UND=true;STOPU=false;WDEAD=false;if(!WK)WP=null;btn.textContent='⏹ Stop';crumb('working: starting the meaning model');
+ try{await worker()}catch(e){UND=false;btn.textContent=label;crumb('ok');S.sem=false;save();sync();setEs('❌ The meaning model could not start: '+(e.message||e)+'. Meaning is OFF; everything else works. Tap again to retry.');return}
+ const tot=todo.reduce((a,b)=>a+Math.ceil(b.chunks.length/b.stride)-(b.embN||0),0),t0=Date.now();let done=0;
+ try{
+  for(const b of todo){
+   const s=b.stride,m=Math.ceil(b.chunks.length/s);
+   if(!b.emb||b.emb.length!==m*384){b.emb=new Float32Array(m*384);b.embN=0}
+   while((b.embN||0)<m&&!STOPU){
+    crumb('working: reading passages by meaning ('+b.name.slice(0,20)+')');
+    const from=b.embN||0,ids=[];for(let j=from;j<Math.min(m,from+48);j++)ids.push(j*s);
+    const v=await embed(ids.map(i=>b.chunks[i]));
+    v.forEach((x,q)=>b.emb.set(x,(from+q)*384));b.embN=from+v.length;done+=v.length;
+    const eta=Math.max(0,Math.round((tot-done)/(done/((Date.now()-t0)/1000))));
+    setEs('Reading by meaning… '+done+' / '+tot+' passages · '+b.name.slice(0,24)+' · about '+Math.max(1,Math.ceil(eta/60))+' min left');
+    const p=document.getElementById('eb');if(p)p.style.width=(done/tot*100)+'%';
+    await ePut(b);if(!S.sem){S.sem=true;save();sync()}}
+   if(STOPU)break}
+  setEs(STOPU?'⏸ Stopped. Tap again to continue where I left off. Partial results already work.':'✅ Done. Search, quotes and themes now use meaning (big books are sampled).')
+ }catch(e){killWorker();setEs('❌ '+(e.message||e)+' Tap again to resume.')}
+ UND=false;STOPU=false;btn.textContent=label;crumb('ok');IDX=null;panel()}
+async function search(t,k){ // hybrid: BM25 over an inverted index + embeddings, merged by rank fusion
+ const X=await index(),q=[...new Set(terms(t))],N=X.docs.length,bm=new Map(),mm=new Map();
+ q.forEach(w=>{const id=X.vocab.get(w);if(id===undefined)return;const p=X.post[id],n=p.d.length,idf=Math.log(1+(N-n+.5)/(n+.5));
+  for(let z=0;z<n;z++){const di=p.d[z],f=p.f[z];bm.set(di,(bm.get(di)||0)+idf*f*2.2/(f+1.2*(.25+.75*X.docs[di].len/X.avg)));mm.set(di,(mm.get(di)||0)+1)}});
+ let sem=null;
+ if(S.sem&&!WDEAD&&X.docs.some(d=>d.v)){const wn=WK?null:note('Waking the meaning model…');
+  try{const qv=(await tmo(embed([t],8000),WK?10000:70000,'the meaning model is not responding'))[0];sem=new Float32Array(N);X.docs.forEach((d,i)=>{sem[i]=d.v?dot(qv,d.v):-1})}
+  catch(e){WDEAD=true;killWorker();S.sem=false;save();if(typeof sml==='function')sml();note('⚠️ Meaning search switched OFF ('+(e.message||e)+'). Using keyword search. You can turn it back on in the menu.')}
+  if(wn)wn.remove()}
+ const rb=new Map(),rs=new Map();
+ [...bm.keys()].sort((a,b)=>bm.get(b)-bm.get(a)).slice(0,100).forEach((i,r)=>rb.set(i,r));
+ if(sem)Array.from(sem.keys()).filter(i=>sem[i]>0).sort((a,b)=>sem[b]-sem[a]).slice(0,100).forEach((i,r)=>rs.set(i,r));
+ return[...new Set([...rb.keys(),...rs.keys()])].map(i=>({d:X.docs[i],m:mm.get(i)||0,sim:sem?Math.max(0,sem[i]):0,s:(rb.has(i)?1/(60+rb.get(i)):0)+(rs.has(i)?1/(60+rs.get(i)):0)})).sort((a,b)=>b.s-a.s).slice(0,k)}
+async function squotes(t,hits,X,n){ // quotes chosen by meaning when available
+ if(!(S.sem&&!WDEAD&&X.docs.some(d=>d.v)))return quotes(t,hits,X,n);
+ const c=[];hits.forEach(h=>sents(h.d.c).filter(s=>s.length<320).forEach(s=>c.push({s,b:h.d.b,p:Math.round((h.d.i+1)/h.d.n*100)})));
+ try{const cc=c.slice(0,45),v=await embed([t].concat(cc.map(x=>x.s)),12000);cc.forEach((x,i)=>x.v=dot(v[0],v[i+1]));
+  return cc.sort((a,b)=>b.v-a.v).filter((x,i,a)=>a.findIndex(y=>y.s===x.s)===i).slice(0,n)}catch(e){return quotes(t,hits,X,n)}}
+function kmeans(V,k,dim){
+ const n=V.length;let cent=[];for(let i=0;i<k;i++)cent.push(Float32Array.from(V[Math.floor(i*n/k)]));
+ const as=new Int32Array(n);
+ for(let it=0;it<12;it++){
+  for(let i=0;i<n;i++){let b=0,bv=-2;for(let c=0;c<k;c++){const d=dot(V[i],cent[c]);if(d>bv){bv=d;b=c}}as[i]=b}
+  const sum=cent.map(()=>new Float32Array(dim)),cn=new Int32Array(k);
+  for(let i=0;i<n;i++){cn[as[i]]++;const s=sum[as[i]];for(let j=0;j<dim;j++)s[j]+=V[i][j]}
+  cent=sum.map((s,c)=>{if(!cn[c])return cent[c];let z=0;for(let j=0;j<dim;j++)z+=s[j]*s[j];z=Math.sqrt(z)||1;return s.map(x=>x/z)})}
+ return{as,cent}}
+async function themesText(r){ // main themes, found by clustering passages by meaning
+ const s=r.stride||1,m=Math.ceil(r.chunks.length/s);if(!embDone(r)||m<4)return'';
+ const V=[],CI=[];for(let j=0;j<m;j++){V.push(r.emb.subarray(j*384,(j+1)*384));CI.push(j*s)}
+ const n=m,k=Math.min(6,Math.max(2,Math.round(n/15))),{as,cent}=kmeans(V,k,384),X=await index(),out=[];
+ for(let c=0;c<k;c++){const mem=[];for(let i=0;i<n;i++)if(as[i]===c)mem.push(i);if(!mem.length)continue;
+  const tf=new Map();mem.forEach(i=>terms(r.chunks[CI[i]]).forEach(w=>tf.set(w,(tf.get(w)||0)+1)));
+  const lab=[...tf].map(([w,f])=>[w,f*Math.log(1+X.docs.length/(X.df.get(w)||1))]).sort((a,b)=>b[1]-a[1]).slice(0,4).map(x=>x[0]).join(', ');
+  const rep=mem.reduce((a,i)=>dot(V[i],cent[c])>dot(V[a],cent[c])?i:a,mem[0]);let q='';
+  try{const ss=sents(r.chunks[CI[rep]]).slice(0,12);if(ss.length){const v=await embed(ss,12000);let b=0,bv=-2;v.forEach((x,i)=>{const d=dot(x,cent[c]);if(d>bv){bv=d;b=i}});q=ss[b]}}catch(e){}
+  out.push({sz:mem.length,lab,q})}
+ out.sort((a,b)=>b.sz-a.sz);
+ return'MAIN THEMES (grouped by meaning)\n'+out.map((o,i)=>(i+1)+'. '+o.lab+' · '+Math.round(o.sz/n*100)+'% of the text'+(o.q?'\n   “'+o.q+'”':'')).join('\n')}
+function quotes(t,hits,X,n){ // exact sentences from the books that best match the question
+ const q=new Set(terms(t)),c=[];
+ hits.forEach(h=>sents(h.d.c).filter(s=>s.length<320).forEach(s=>{let v=0;new Set(terms(s)).forEach(w=>{if(q.has(w))v+=Math.log(1+X.docs.length/(X.df.get(w)||1))});if(v>0)c.push({s,v,b:h.d.b,p:Math.round((h.d.i+1)/h.d.n*100)})}));
+ return c.sort((a,b)=>b.v-a.v).filter((x,i,a)=>a.findIndex(y=>y.s===x.s)===i).slice(0,n)}
+const norm=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+function verify(out,src){const ns=norm(src);return out.replace(/[“"]([^”"\n]{12,240})[”"]/g,(m,q)=>ns.includes(norm(q))?m:'“'+q+'” (⚠️ not verbatim)')}
+async function exemplars(){
+ if(EX)return EX;const X=await index(),pool=[];
+ X.docs.forEach(d=>{const ss=sents(d.c).filter(s=>s.length>70&&s.length<220);if(ss.length)pool.push(ss[Math.floor(Math.random()*ss.length)])});
+ return EX=pool.sort(()=>Math.random()-.5).slice(0,6)}
+// ---- voice model: trigram language model trained on the books, tuned on held-out text ----
+const tz=t=>t.toLowerCase().match(/[a-z0-9'’\-]+|[.,;:!?—]/g)||[];
+async function lm(){
+ if(LM)return LM;crumb('working: training the voice model');const bs=await bAll(),tk=[];
+ bs.forEach(b=>{if(b.kind==='text'&&tk.length<400000){const a=tz(b.text.slice(0,500000));for(let i=0;i<a.length;i++)tk.push(a[i])}});
+ if(tk.length<2000)return null;
+ const tri=new Map(),bi=new Map(),uni=new Map(),starts=[],hold=[];
+ for(let i=2;i<tk.length;i++){
+  if(i%60000===0)await new Promise(r=>setTimeout(r));
+  if(Math.floor(i/200)%10===0){if(hold.length<8000)hold.push(i);continue}
+  const u=tk[i-2],v=tk[i-1],w=tk[i],k=u+' '+v;
+  (tri.get(k)||tri.set(k,[]).get(k)).push(w);(bi.get(v)||bi.set(v,[]).get(v)).push(w);uni.set(w,(uni.get(w)||0)+1);
+  if(/^[.!?]$/.test(u)&&/^[a-z]/.test(v))starts.push(v+' '+w)}
+ let N=0;uni.forEach(c=>N+=c);const V=uni.size,H=hold.length,r3=new Float32Array(H),r2=new Float32Array(H),p1=new Float32Array(H);
+ const cnt=(a,w)=>{let c=0;for(let j=0;j<a.length;j++)if(a[j]===w)c++;return c};
+ hold.forEach((i,h)=>{const u=tk[i-2],v=tk[i-1],w=tk[i],a=tri.get(u+' '+v),b=bi.get(v);r3[h]=a?cnt(a,w)/a.length:0;r2[h]=b?cnt(b,w)/b.length:0;p1[h]=((uni.get(w)||0)+1)/(N+V)});
+ crumb('ok');return LM={tri,bi,starts:starts.length?starts:['the','a'].map(x=>x+' '+x),r3,r2,p1,words:tk.length}}
+const ppl=(L,l)=>{let s=0;const n=L.r3.length;for(let i=0;i<n;i++)s+=Math.log(l[0]*L.r3[i]+l[1]*L.r2[i]+l[2]*L.p1[i]+1e-12);return Math.exp(-s/n)};
+async function retrain(){ // champion vs challenger on held-out book text. No ratings needed.
+ const n=note('Training the voice model on your books…');let L;
+ try{L=await lm()}catch(e){n.textContent='❌ '+(e.message||e);return}
+ if(!L){n.textContent='Add a book with at least ~2,000 words and I will learn its voice.';return}
+ const base=ppl(L,S.lam);let best=S.lam,bs=base;
+ for(let i=0;i<60;i++){let c=best.map(x=>Math.max(.02,x+(Math.random()-.5)*.25));const z=c[0]+c[1]+c[2];c=c.map(x=>x/z);const p=ppl(L,c);if(p<bs*.999){bs=p;best=c}}
+ const v=S.hist.length+1;
+ if(best!==S.lam){S.lam=best;S.hist.push({v,note:'voice model improved on held-out text: perplexity '+base.toFixed(0)+' → '+bs.toFixed(0)})}
+ else S.hist.push({v:'—',note:'no better setting found, kept current (perplexity '+base.toFixed(0)+')'});
+ S.ppl=bs;save();panel();n.textContent='🧠 Learned from '+Math.round(L.words/1000)+'k words. Held-out perplexity '+bs.toFixed(0)+' (lower is better).'}
+function genText(L,n){
+ const pick=a=>a[Math.floor(Math.random()*a.length)];
+ let st=pick(L.starts).split(' '),u=st[0],v=st[1],out=[u,v],s=0,g=0;
+ while(s<n&&g++<700){
+  const a=L.tri.get(u+' '+v)||L.bi.get(v);
+  if(!a||!a.length){out.push('.');s++;st=pick(L.starts).split(' ');u=st[0];v=st[1];out.push(u,v);continue}
+  const w=a[Math.floor(Math.random()*a.length)];out.push(w);if(/^[.!?]$/.test(w))s++;u=v;v=w}
+ return out.join(' ').replace(/ ([.,;:!?])/g,'$1').replace(/\bi\b/g,'I').replace(/(^|[.!?]\s+)([a-z])/g,(m,a,b)=>a+b.toUpperCase())}
+async function bookCmd(t){
+ const bs=await bAll();if(!bs.length)return false;
+ const m=/^\s*summari[sz]e\b(.*)$/i.exec(t);
+ if(m){const q=m[1].toLowerCase();await summarize(bs.find(b=>q&&q.includes(b.name.toLowerCase().replace(/\.[a-z0-9]+$/,'')))||bs[bs.length-1]);return true}
+ if(/\b(write|compose|continue|generate)\b/i.test(t)&&/(style|voice)/i.test(t)&&/(book|author)/i.test(t)){
+  const tp=/\b(?:about|on)\s+(.+?)(?:\s+in\s+(?:the\s+|my\s+)?(?:style|voice).*)?$/i.exec(t),topic=tp&&tp[1].trim();
+  if(topic&&topic.length>2&&(llm||cloudKey())){
+   const hh=await search(topic,4),ex=await exemplars(),ctx=hh.map(h=>'['+h.d.b+'] '+h.d.c).join('\n---\n');
+   const sys='Write one or two paragraphs about "'+topic+'" in the voice and sentence rhythm of the sample lines. Base every idea on the excerpts and do not invent facts. Quote at most one short phrase exactly, in double quotes.\n\nVoice samples:\n'+ex.map(x=>'- '+x).join('\n')+'\n\nExcerpts:\n'+ctx;
+   let out;
+   if(cloudKey()){try{out=clean(await cloud(sys,600))}catch(e){note('⚠️ Cloud error: '+(e.message||e))}}
+   if(!out&&llm){try{out=(await llm.chat.completions.create({messages:[{role:'system',content:sys},{role:'user',content:'Write it.'}],max_tokens:350})).choices[0].message.content}catch(e){}}
+   if(out){bot(verify(out,ctx)+'\n\n✍️ Ideas from your books (meaning), written in their voice (style).',t,null);return true}}
+  const L=await lm();
+  if(!L){bot('Add a book with a few thousand words first, then I can learn its voice.',t,null);return true}
+  bot(genText(L,5)+'\n\n✍️ Written by a language model trained on your books. It copies their phrasing and sentence rhythm, not their meaning.',t,null);return true}
+ const hits=await search(t,cloudKey()?6:4),wq=/\b(quotes?|passages?|excerpts?|where does it say)\b/i.test(t);
+ if(!hits.length||(hits[0].m<2&&!wq&&!(hits[0].sim>.5)))return false;
+ const X=await index(),qs=await squotes(t,hits,X,3),ctx=hits.map(h=>'['+h.d.b+'] '+h.d.c).join('\n---\n'),ex=S.voice?await exemplars():[];
+ const qq=qs.length?qs:[{s:hits[0].d.c.trim().slice(0,260),b:hits[0].d.b,p:Math.round((hits[0].d.i+1)/hits[0].d.n*100)}];
+ const sys='You are a thoughtful reading companion. Answer conversationally using ONLY the excerpts from the user\'s books. Quote 1-3 short phrases EXACTLY as written, in double quotes. If the excerpts do not answer the question, say so.'+(ex.length?'\nMatch the voice and sentence rhythm of these lines from the books:\n'+ex.map(x=>'- '+x).join('\n'):'')+'\n\nExcerpts:\n'+ctx;
+ let out;
+ if(cloudKey()){try{out=clean(await cloud(sys+'\n\nQuestion: '+t,700))}catch(e){note('⚠️ Cloud error: '+(e.message||e))}}
+ if(!out&&llm){try{out=(await llm.chat.completions.create({messages:[{role:'system',content:sys},{role:'user',content:t}],max_tokens:300})).choices[0].message.content}catch(e){}}
+ out=out?verify(out,ctx):'Here is what your books say about that:';
+ bot(out+'\n\n📖 From your books:\n'+qq.map(q=>'“'+q.s+'”\n— '+q.b+', about '+q.p+'% in').join('\n\n'),t,null);return true}
+async function addFiles(fs){
+ for(const f of fs){const n=note('Reading '+f.name+'…');crumb('working: reading '+f.name);
+  try{const text=(await extract(f,p=>n.textContent='Reading '+f.name+' '+(p*100|0)+'%')).replace(/[ \t]+/g,' ').replace(/\n\s*\n+/g,'\n\n').trim();
+   if(text.length<30)throw new Error('no readable text (scanned PDF?)');
+   await bPut({id:'b'+Date.now()+Math.floor(Math.random()*1e4),name:f.name,kind:/\.(xlsx?|csv)$/i.test(f.name)?'sheet':'text',text,chunks:chunk(text),added:Date.now()});
+   n.textContent='📚 Added '+f.name+' ('+Math.round(text.length/1000)+'k chars). Ask me about it, or type "summarize".'}
+  catch(e){n.textContent='❌ '+f.name+': '+(e.message||e)}}
+ IDX=null;LM=null;EX=null;crumb('ok');renderBooks();if(S.sem&&!WDEAD)understand()}
+async function renderBooks(){
+ const bs=await bAll(),el=$('bk');el.innerHTML='';
+ if(!bs.length){el.textContent='No books yet.';return}
+ bs.forEach(b=>{const r=document.createElement('div');r.style.cssText='display:flex;align-items:center;gap:4px;margin:4px 0';
+  const nm=document.createElement('div');nm.style.cssText='flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx)';nm.textContent=b.name;
+  const s=document.createElement('button');s.textContent='Summarize';s.className='btn';s.style.cssText='width:auto;margin:0;padding:6px 10px';s.onclick=()=>{$('dr').style.display='none';summarize(b)};
+  const x=document.createElement('button');x.textContent='✕';x.className='ib';x.onclick=async()=>{await bDel(b.id);IDX=null;LM=null;EX=null;renderBooks()};
+  r.append(nm,s,x);el.appendChild(r)})}
+const cst=()=>$('cs').textContent=cloudKey()?'✅ ON: summaries and book answers use Claude ('+cloudModel()+'). Needs internet; book text is sent to Anthropic. Clear the key and Save to go back offline.':'Add your own Anthropic API key for far better summaries and answers than the offline digest. Needs internet; the book text is sent to Anthropic. The key stays on this phone and you pay per use on your own account.';
+$('ak').value=cloudKey();$('am').value=cloudModel();$('sk').onclick=()=>{try{const k=$('ak').value.trim();k?localStorage.setItem('eai-ak',k):localStorage.removeItem('eai-ak');localStorage.setItem('eai-am',$('am').value)}catch(e){}cst()};cst();
+const vcl=()=>$('vc').textContent='🎙 Chat in my books\' voice: '+(S.voice?'ON':'OFF');
+$('vc').onclick=()=>{S.voice=!S.voice;EX=null;save();vcl()};vcl();
+$('wr').onclick=()=>{const tp=prompt('Write about what? (leave blank for a random passage)');if(tp===null)return;$('dr').style.display='none';send(tp.trim()?'write about '+tp.trim()+' in the voice of my books':'write a paragraph in the voice of my books')};
+const sml=()=>$('sm').textContent='Meaning search: '+(S.sem?'ON':'OFF')+' (tap to switch)';
+$('sm').onclick=()=>{S.sem=!S.sem;if(!S.sem)killWorker();WDEAD=false;save();sml();panel()};sml();
+$('un').onclick=understand;
+$('ab').onclick=$('at').onclick=()=>$('fi').click();
+$('fi').onchange=e=>{$('dr').style.display='none';addFiles([...e.target.files]);e.target.value=''};
+$('sd').onclick=()=>send($('in').value);
+$('in').onkeydown=e=>{if(e.key==='Enter')send($('in').value)};
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>send(c.dataset.t));
+$('mn').onclick=()=>{panel();$('dr').style.display='block'};
+$('dr').onclick=e=>{if(e.target.id==='dr')$('dr').style.display='none'};
+$('rt').onclick=retrain;$('ld').onclick=loadLLM;
+$('nw').onclick=()=>{msgs$.innerHTML='';$('hero').style.display='block';chatLog.length=0};
+$('rs').onclick=()=>{if(confirm('Wipe all learning?')){S=seed();S.notes=[];S.lam=[.6,.3,.1];S.voice=true;save();msgs$.innerHTML='';$('hero').style.display='block';panel()}};
+try{const c=localStorage.getItem('eai-crumb');if(c&&c.startsWith('working:')){S.sem=false;save();sml();note('⚠️ Last time the app stopped while it was '+c.slice(9)+'. I switched meaning search OFF to be safe. You can turn it on again in the menu.');localStorage.setItem('eai-crumb','ok')}}catch(e){}
+addEventListener('error',e=>{note('⚠️ Error: '+(e.message||'unknown'))});
+addEventListener('unhandledrejection',e=>{note('⚠️ Error: '+((e.reason&&e.reason.message)||e.reason||'unknown'))});
+panel();
+</script>
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
+</body>
+</html>
